@@ -1,12 +1,13 @@
 <form [formGroup]="loginForm" (ngSubmit)="sendLogin(loginForm.value)">
 
-  <div>
+  <div *ngIf="!encrypted"> 
     <textarea formControlName="seeds" rows="4" placeholder="Seeds"></textarea>
   </div>
 
   <div>
     <input formControlName="password" type="password" placeholder="Password" />
   </div>
-  
+
   <button type="submit">Login</button>
   </form>
+
