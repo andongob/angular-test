@@ -6,6 +6,7 @@ import * as CryptoJS from "crypto-js";
 import * as bip39 from "bip39";
 import { hdkey } from 'ethereumjs-wallet';
 import * as util from "ethereumjs-util";
+import Web3 from 'web3';
 
 
 @Component({
@@ -24,6 +25,8 @@ export class AppComponent {
     address: ''
   }
 
+  web3: any;
+
   constructor(private formBuilder: FormBuilder){
     this.loginForm = this.formBuilder.group ({
       seeds: '',
@@ -33,7 +36,13 @@ export class AppComponent {
   this.encrypted = window.localStorage.getItem('seeds');  //valida que las semillas existen y están en localStorage
 
   this.initWallet('feature lesson crowd eager guitar exhibit memory degree pride hole shine battle') //FUERA DE CÓDIGO: truquillo para que mientras desarrollemos no tengamos que meter todo el rato la contraseña:
-  }
+  
+  this.web3 = new Web3;
+
+  this.web3.setProvider( 
+    new this.web3.providers.HttpProvider('https://goerli.infura.io/v3/87388b2cafcd4bcdbb26947767a1869f')
+  );
+}
 
 //feature lesson crowd eager guitar exhibit memory degree pride hole shine battle - pwd: seña
 
@@ -51,12 +60,15 @@ async initWallet(seeds: string) {  //método para inciar el wallet en ethereum
   var publicKey = util.privateToPublic(privateKey);
   var address = "0x" + util.pubToAddress(publicKey).toString("hex"); //convierte las palabras clave en semillas
 
-  this.wallet.address = address;  //indica la cuenta address, del div Hello en app.component.html una vez iniciada sesión
+  this.wallet.address = address; //indica la cuenta address, del div Hello en app.component.html una vez iniciada sesión
 
+  this.wallet.balance = await this.web3.eth.getBalance(address).then((result:any) => {
+    return this.web3.utils.fromWei(result, 'ether'); // convierte el balance de Wei a Ether
+  });
   //console.log(address);
   //console.log(privateKey);
   //console.log(publicKey);
-
+ 
 
 }
 
