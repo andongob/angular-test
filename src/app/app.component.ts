@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 
 import * as Mnemonic from "bitcore-mnemonic";
 import * as CryptoJS from "crypto-js";
@@ -27,7 +29,13 @@ export class AppComponent {
 
   web3: any;
 
-  constructor(private formBuilder: FormBuilder){
+  window: any;
+
+  constructor(@Inject(DOCUMENT) private document: Document, private formBuilder: FormBuilder){ //Angular no reconoce windows.ethereum hay que 'engañarle' con windows.document
+    this.window = document.defaultView;
+
+    console.log(this.window.ethereum);
+    
     this.loginForm = this.formBuilder.group ({
       seeds: '',
       password: ''
@@ -35,7 +43,7 @@ export class AppComponent {
 
   this.encrypted = window.localStorage.getItem('seeds');  //valida que las semillas existen y están en localStorage
 
-  this.initWallet('feature lesson crowd eager guitar exhibit memory degree pride hole shine battle') //FUERA DE CÓDIGO: truquillo para que mientras desarrollemos no tengamos que meter todo el rato la contraseña:
+  //this.initWallet('feature lesson crowd eager guitar exhibit memory degree pride hole shine battle') //FUERA DE CÓDIGO: truquillo para que mientras desarrollemos no tengamos que meter todo el rato la contraseña:
   
   this.web3 = new Web3;
 
@@ -103,5 +111,27 @@ async initWallet(seeds: string) {  //método para inciar el wallet en ethereum
 
     this.initWallet(loginData.seeds);
 
+  }
+
+  loginWithMetamask() {  //método para hacer login con metamask, y se abre la ventana de metamask, curiosamente si tienes otro wallet te coje coinbase wallet en mi caso 
+    if (!this.window.ethereum) {
+      return alert('No tienes instalado Metamask');
+    }
+
+    this.window.ethereum.enable().then((accounts:any) => {
+
+      console.log(accounts)
+    });
+
+    //console.log(this.window.ethereum)
+  }
+
+  removeSeeds() {
+    window.localStorage.removeItem('seeds');
+    this.encrypted = '';
+    this.wallet = {
+      address: '',
+      balance: ''
+    };
   }
 }

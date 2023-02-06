@@ -1,6 +1,6 @@
 <form *ngIf="!wallet.address" [formGroup]="loginForm" (ngSubmit)="sendLogin(loginForm.value)">
 
-  <div *ngIf="!encrypted"> 
+  <div *ngIf="!encrypted"> <!-- *ngIf indica cuando quieres que se muestre el campo -->
     <textarea formControlName="seeds" rows="4" placeholder="Seeds"></textarea>
   </div>
 
@@ -8,12 +8,15 @@
     <input formControlName="password" type="password" placeholder="Password" />
   </div>
 
-  <button type="submit">Login</button>
+  <button type="submit">Login</button> <!-- los botones, etiquetas, etc,.. siempre van asociados a un método que se declara en app.components.ts -->
+  <button type="button" (click)="removeSeeds()" *ngIf="encrypted">Clear Seeds</button> <!-- borra las semillas -->
+  <button type="button" (click)="loginWithMetamask()">Login with Metamask</button> 
   </form>
 
   <div *ngIf="wallet.address"> 
     <h1> Hello {{ wallet.address }} </h1> 
-    <p>Tu saldo en ETH es {{ wallet.balance }}</p>
+    <p>Tu saldo en ETH es: {{ wallet.balance }}</p>
+    <p><a href="https://goerli.etherscan.io/address/{{ wallet.address }}" target="_blank">Ver tu cuenta en Etherscan (TestNet goerli)</a></p>
   </div>
 
 
