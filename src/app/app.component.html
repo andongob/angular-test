@@ -1,4 +1,4 @@
-<form [formGroup]="loginForm" (ngSubmit)="sendLogin(loginForm.value)">
+<form *ngIf="!wallet.address" [formGroup]="loginForm" (ngSubmit)="sendLogin(loginForm.value)">
 
   <div *ngIf="!encrypted"> 
     <textarea formControlName="seeds" rows="4" placeholder="Seeds"></textarea>
@@ -10,4 +10,9 @@
 
   <button type="submit">Login</button>
   </form>
+
+  <div *ngIf="wallet.address"> 
+    <h1> Hello {{ wallet.address }} </h1> 
+  </div>
+
 
