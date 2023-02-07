@@ -54,7 +54,7 @@ export class AppComponent {
 
 //feature lesson crowd eager guitar exhibit memory degree pride hole shine battle - pwd: seña
 
-async initWallet(seeds: string) {  //método para inciar el wallet en ethereum
+async initWallet(seeds: string) {  //método para inciar el wallet en ethereum con semillas
   var mnemonic = new Mnemonic(seeds);
   var seed = await bip39.mnemonicToSeed(mnemonic.toString());
   var path = "m/44'/60'/0'70/0";
@@ -68,6 +68,8 @@ async initWallet(seeds: string) {  //método para inciar el wallet en ethereum
   var publicKey = util.privateToPublic(privateKey);
   var address = "0x" + util.pubToAddress(publicKey).toString("hex"); //convierte las palabras clave en semillas
 
+  this.getBalance(address);
+  
   this.wallet.address = address; //indica la cuenta address, del div Hello en app.component.html una vez iniciada sesión
 
   this.wallet.balance = await this.web3.eth.getBalance(address).then((result:any) => {
@@ -84,6 +86,15 @@ async initWallet(seeds: string) {  //método para inciar el wallet en ethereum
     if (loginData.seeds == '' || loginData.password == ''){
       return alert('Campos vacíos, por favor introduce credenciales'); //aparece si alguno de los campos está vacío
     } */
+
+    async getBalance(address:string){ //si iniciamos con metamask
+
+    this.wallet.address = address; //indica la cuenta address, del div Hello en app.component.html una vez iniciada sesión
+    this.wallet.balance = await this.web3.eth.getBalance(address).then((result:any) => {
+      return this.web3.utils.fromWei(result, 'ether'); // convierte el balance de Wei a Ether
+  });
+    }
+
 
  sendLogin(loginData:any){ //solo pide contraseña
     if (loginData.password == ''){
@@ -118,7 +129,12 @@ async initWallet(seeds: string) {  //método para inciar el wallet en ethereum
       return alert('No tienes instalado Metamask');
     }
 
-    this.window.ethereum.enable().then((accounts:any) => {
+    //El siguente método se usa para que muestre el balance de la address en caso de loguear con Metamask
+
+    this.window.ethereum.enable().then((accounts:any) => {  //para que funcione hay que 'trampear con window.document
+      let address = accounts[0]; 
+      this.getBalance(address);
+
 
       console.log(accounts)
     });
