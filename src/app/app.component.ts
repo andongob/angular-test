@@ -21,6 +21,8 @@ export class AppComponent {
 
   loginForm: any;
 
+  sendForm: any;
+
   encrypted: any;
 
   wallet:any = {
@@ -34,12 +36,18 @@ export class AppComponent {
   constructor(@Inject(DOCUMENT) private document: Document, private formBuilder: FormBuilder){ //Angular no reconoce windows.ethereum hay que 'engañarle' con windows.document
     this.window = document.defaultView;
 
-    console.log(this.window.ethereum);
+    //console.log(this.window.ethereum);
     
     this.loginForm = this.formBuilder.group ({
       seeds: '',
       password: ''
     });
+
+    this.sendForm = this.formBuilder.group({
+      to: '',
+      amount: ''
+    });
+
 
   this.encrypted = window.localStorage.getItem('seeds');  //valida que las semillas existen y están en localStorage
 
@@ -149,5 +157,17 @@ async initWallet(seeds: string) {  //método para inciar el wallet en ethereum c
       address: '',
       balance: ''
     };
+  }
+
+  sendEther(sendData:any){
+if (sendData.to == '' || sendData.amount == null) {
+  return alert('Algún campo está vacío')
+}
+
+if ( ! util.isValidAddress(sendData.to)) {
+  return alert('La dirección no es válida');
+}
+
+    console.log(sendData);
   }
 }

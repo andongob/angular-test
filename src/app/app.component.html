@@ -11,12 +11,25 @@
   <button type="submit">Login</button> <!-- los botones, etiquetas, etc,.. siempre van asociados a un método que se declara en app.components.ts -->
   <button type="button" (click)="removeSeeds()" *ngIf="encrypted">Clear Seeds</button> <!-- borra las semillas -->
   <button type="button" (click)="loginWithMetamask()">Login with Metamask</button> 
-  </form>
+</form>
 
-  <div *ngIf="wallet.address"> 
-    <h1> Hello {{ wallet.address }} </h1> 
+<div *ngIf="wallet.address"> 
+  <h1> Hello {{ wallet.address }} </h1> 
     <p>Tu saldo en ETH es: {{ wallet.balance }}</p>
     <p><a href="https://goerli.etherscan.io/address/{{ wallet.address }}" target="_blank">Ver tu cuenta en Etherscan (TestNet goerli)</a></p>
-  </div>
+  
+  <h2>Send Ethers</h2> <!-- formulario envío de Ethers -->
+    <form [formGroup]="sendForm" (ngSubmit)="sendEther(sendForm.value)">
+      <div>
+        <input formControlName="to" type="text" placeholder="To" />
+      </div>
+      <div>
+        <input formControlName="amount" type="number" placeholder="Amount" />
+      </div>
+      <button type="submit">Send</button> 
+    </form>
+    
+    
+ </div>
 
 
