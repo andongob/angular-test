@@ -26,7 +26,8 @@ export class AppComponent {
   encrypted: any;
 
   wallet:any = {
-    address: ''
+    address: '',
+    privateKey: '',
   }
 
   web3: any;
@@ -75,6 +76,8 @@ async initWallet(seeds: string) {  //método para inciar el wallet en ethereum c
   var privateKey = wallet.getPrivateKey();
   var publicKey = util.privateToPublic(privateKey);
   var address = "0x" + util.pubToAddress(publicKey).toString("hex"); //convierte las palabras clave en semillas
+
+  this.wallet.privateKey = privateKey;
 
   this.getBalance(address);
   
@@ -159,7 +162,7 @@ async initWallet(seeds: string) {  //método para inciar el wallet en ethereum c
     };
   }
 
-  sendEther(sendData:any){
+async sendEther(sendData:any){
 if (sendData.to == '' || sendData.amount == null) {
   return alert('Algún campo está vacío')
 }
@@ -168,6 +171,20 @@ if ( ! util.isValidAddress(sendData.to)) {
   return alert('La dirección no es válida');
 }
 
-    console.log(sendData);
+// en las siguentes lineas método de transacción
+var rawData = {
+  from: this.wallet.address,  //usuario origen, es decir, nuestra wallet
+  to: sendData.to,
+  value: sendData.amount,
+  gasPrice: this.web3.utils.toHex(10000000000),
+  gasLimit: this.web3.utils.toHex(1000000),
+  nonce: await this.web3.eth.getTransactionCount(this.wallet.address)
+};
+
+var signed = await this.web3.eth.accounts.signTransaction(rawData, this.wallet.privateKey.toString("hex"));
+
+    console.log(signed);
+
+    //console.log(sendData);
   }
 }
